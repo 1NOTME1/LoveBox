@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Walentynki 💖</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #ffe6e6;
+      color: #ff3d60;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .hidden { display: none; }
+    input {
+      padding: 10px;
+      border: 2px solid #ff3d60;
+      border-radius: 5px;
+      font-size: 18px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background-color: #ff3d60;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #ff1f50; }
+    #loginPage {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #ffe6e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #mainPage {
+      display: none;
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      perspective: 1000px;
+      overflow: hidden;
+    }
+    .box {
+      position: relative;
+      width: 150px;
+      height: 140px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      margin: 0 auto;
+    }
+    .lid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150px;
+      height: 50px;
+      background-color: #ff6b81;
+      border: 2px solid #ff3d60;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      transform-origin: top;
+      z-index: 2;
+    }
+    .base {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: 150px;
+      height: 100px;
+      background-color: #ff6b81;
+      border: 2px solid #ff3d60;
+      border-top: none;
+      border-radius: 0 0 5px 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      z-index: 1;
+    }
+    .box.open .lid {
+      animation: dropLid 2s forwards;
+    }
+    @keyframes dropLid {
+      0% { transform: translateY(0) rotateX(0); }
+      100% { transform: translateY(150px) rotateX(-90deg); }
+    }
+    .message, .heart {
+      position: absolute;
+      font-size: 20px;
+      color: #ff3d60;
+    }
+    .message {
+      font-weight: bold;
+      animation: moveMessage 1.5s ease forwards;
+    }
+    @keyframes moveMessage {
+      from {
+        opacity: 0;
+        transform: translate(0, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate(var(--tx), var(--ty));
+      }
+    }
+    .heart {
+      font-size: 28px;
+      color: red;
+      animation: flyHeart 3s forwards;
+    }
+    @keyframes flyHeart {
+      0% { transform: translate(0,0) scale(0.5); opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginPage">
+    <h1>Podaj kod, aby wejść 💖</h1>
+    <input type="text" id="codeInput" placeholder="Wpisz kod">
+    <br>
+    <button onclick="checkCode()">Wejdź</button>
+    <p id="errorMessage" style="color: red;" class="hidden">Niepoprawny kod! Spróbuj ponownie.</p>
+  </div>
+
+  <div id="mainPage">
+    <h1>🎁 Kocham cię za: 🎁</h1>
+    <div class="box" id="loveBox" onclick="openBox()">
+      <div class="lid"></div>
+      <div class="base">💝</div>
+    </div>
+  </div>
+
+  <script>
+    function checkCode() {
+      const correctCode = "mufinek";
+      const userCode = document.getElementById("codeInput").value;
+      if (userCode.toLowerCase() === correctCode) {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("mainPage").style.display = "block";
+      } else {
+        document.getElementById("errorMessage").classList.remove("hidden");
+      }
+    }
+
+    function openBox() {
+      const box = document.getElementById("loveBox");
+      box.classList.add("open");
+      box.onclick = null;
+      setTimeout(() => {
+        const messages = [
+          "Test 1", "Test 2", "Test 3", "Test 4", "Test 5",
+          "Test 6", "Test 7", "Test 8", "Test 9", "Test 10",
+          "Test 11", "Test 12", "Test 13", "Test 14", "Test 15",
+          "Test 16", "Test 17", "Test 18", "Test 19", "Test 20"
+        ];
+        messages.forEach((msg, i) => {
+          setTimeout(() => createMessage(msg), i * 500);
+        });
+        for (let i = 0; i < 30; i++) {
+          setTimeout(() => createHeart(), i * 200);
+        }
+      }, 2200);
+    }
+
+    function createMessage(text) {
+      const mainPage = document.getElementById("mainPage");
+      const box = document.getElementById("loveBox");
+      const boxRect = box.getBoundingClientRect();
+      const mainRect = mainPage.getBoundingClientRect();
+      const centerX = boxRect.left + boxRect.width / 2 - mainRect.left;
+      const centerY = boxRect.top + boxRect.height / 2 - mainRect.top - 50;
+      
+      const message = document.createElement("div");
+      message.classList.add("message");
+      message.innerText = text;
+      message.style.left = centerX + "px";
+      message.style.top = centerY + "px";
+      
+      const finalX = Math.floor(Math.random() * (mainPage.clientWidth - 100));
+      const finalY = Math.floor(Math.random() * (mainPage.clientHeight - 50));
+      const translateX = finalX - centerX;
+      const translateY = finalY - centerY;
+      message.style.setProperty('--tx', translateX + "px");
+      message.style.setProperty('--ty', translateY + "px");
+      
+      mainPage.appendChild(message);
+    }
+    
+    function createHeart() {
+      const mainPage = document.getElementById("mainPage");
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerText = "❤️";
+      const box = document.getElementById("loveBox");
+      const boxRect = box.getBoundingClientRect();
+      const mainRect = mainPage.getBoundingClientRect();
+      const centerX = boxRect.left + boxRect.width / 2 - mainRect.left;
+      const centerY = boxRect.top + boxRect.height / 2 - mainRect.top - 50;
+      heart.style.left = centerX + "px";
+      heart.style.top = centerY + "px";
+      const randomX = Math.floor(Math.random() * 200 - 100);
+      const randomY = Math.floor(Math.random() * -250 - 50);
+      heart.style.setProperty('--x', randomX + "px");
+      heart.style.setProperty('--y', randomY + "px");
+      mainPage.appendChild(heart);
+    }
+  </script>
+</body>
+</html>
